@@ -1,0 +1,390 @@
+{
+  "info": {
+    "name": "TaskFlow API",
+    "description": "Local API examples. Set empty credentials and token variables privately. Clear them before export. Set project_id/task_id from created responses. Destructive requests delete only the selected IDs.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{access_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:8000",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "refresh_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "username",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "email",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "password",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "project_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "task_id",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Register",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{base_url}}/api/auth/register/",
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"{{username}}\",\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\",\n  \"password_confirm\": \"{{password}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Obtain tokens",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{base_url}}/api/auth/token/",
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"{{username}}\",\n  \"password\": \"{{password}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.response.code === 200) {",
+              "  const data = pm.response.json();",
+              "  pm.collectionVariables.set('access_token', data.access);",
+              "  pm.collectionVariables.set('refresh_token', data.refresh);",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Refresh access",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{base_url}}/api/auth/token/refresh/",
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"refresh\": \"{{refresh_token}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.response.code === 200) {",
+              "  pm.collectionVariables.set('access_token', pm.response.json().access);",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Retrieve profile",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{base_url}}/api/profile/"
+      },
+      "response": []
+    },
+    {
+      "name": "Update profile",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{base_url}}/api/profile/",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"first_name\": \"Demo\",\n  \"last_name\": \"Member\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "List projects",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{base_url}}/api/projects/"
+      },
+      "response": []
+    },
+    {
+      "name": "Create project",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{base_url}}/api/projects/",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Demo project\",\n  \"description\": \"Synthetic portfolio example\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Retrieve project",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{base_url}}/api/projects/{{project_id}}/"
+      },
+      "response": []
+    },
+    {
+      "name": "Update project",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{base_url}}/api/projects/{{project_id}}/",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"description\": \"Updated description\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete project",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": "{{base_url}}/api/projects/{{project_id}}/"
+      },
+      "response": []
+    },
+    {
+      "name": "List tasks",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{base_url}}/api/tasks/"
+      },
+      "response": []
+    },
+    {
+      "name": "Create task",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{base_url}}/api/tasks/",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"project\": \"{{project_id}}\",\n  \"title\": \"Write API tests\",\n  \"description\": \"Synthetic example\",\n  \"status\": \"todo\",\n  \"priority\": \"high\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Retrieve task",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{base_url}}/api/tasks/{{task_id}}/"
+      },
+      "response": []
+    },
+    {
+      "name": "Update task",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{base_url}}/api/tasks/{{task_id}}/",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"done\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete task",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": "{{base_url}}/api/tasks/{{task_id}}/"
+      },
+      "response": []
+    },
+    {
+      "name": "Filter by project",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{base_url}}/api/tasks/?project={{project_id}}"
+      },
+      "response": []
+    },
+    {
+      "name": "Filter by status",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{base_url}}/api/tasks/?status=done"
+      },
+      "response": []
+    },
+    {
+      "name": "Filter by priority",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{base_url}}/api/tasks/?priority=high"
+      },
+      "response": []
+    },
+    {
+      "name": "Search titles",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{base_url}}/api/tasks/?search=API"
+      },
+      "response": []
+    },
+    {
+      "name": "Combined filters",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{base_url}}/api/tasks/?status=todo&priority=high&search=API"
+      },
+      "response": []
+    }
+  ]
+}
